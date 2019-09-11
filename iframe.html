@@ -42,11 +42,71 @@
     background: black;
   }
   </style>
+
+  <style>
+  .wrapper {
+    height: 250px;
+    width: 336px;
+    position: relative;
+    overflow: hidden;
+    margin: 0 auto 10px auto;
+  }
+
+  .button-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+  }
+
+  button {
+    background: transparent;
+    color: white;
+    padding: 10px;
+    border: 0 none;
+    cursor: pointer;
+  }
+
+  .carousel {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    width: 100%;
+    display: flex;
+    position: absolute;
+    left: 0;
+    transition: all 1s ease;
+  }
+
+  .card {
+    min-width: 336px;
+    height: 250px;
+    margin-right: .2rem;
+    background: rebeccapurple;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+  </style>
   <title>Iframe</title>
 </head>
 
 <body>
   <main>
+    <div class="wrapper">
+      <div class="carousel" data-target="carousel">
+        <div class="card" data-target="card">Card 1</div>
+        <div class="card" data-target="card">Card 2</div>
+        <div class="card" data-target="card">Card 3</div>
+      </div>
+      <div class="button-wrapper">
+        <button data-action="slideLeft">&larr;</button>
+        <button data-action="slideRight">&rarr;</button>
+      </div>
+    </div>
     <ul>
       <li>
         <a href="" target="_blank">To Go Out</a>
@@ -69,5 +129,49 @@
     </ul>
   </main>
 </body>
+
+<script>
+  // https://medium.com/@magyarn/simple-carousel-with-vanilla-js-3dd10a143ff2
+  // https://gist.githubusercontent.com/magyarn/d670b38e08469960e108aa8ef18538c2/raw/0e500ed3fb8e41d23c6920ceb60ba8fccc3d2a82/main-4.js
+  // Select the carousel you'll need to manipulate and the buttons you'll add events to
+  const carousel = document.querySelector("[data-target='carousel']");
+  const card = carousel.querySelector("[data-target='card']");
+  const leftButton = document.querySelector("[data-action='slideLeft']");
+  const rightButton = document.querySelector("[data-action='slideRight']");
+
+  // Prepare to limit the direction in which the carousel can slide, 
+  // and to control how much the carousel advances by each time.
+  // In order to slide the carousel so that only three cards are perfectly visible each time,
+  // you need to know the carousel width, and the margin placed on a given card in the carousel
+  const carouselWidth = carousel.offsetWidth;
+  const cardStyle = card.currentStyle || window.getComputedStyle(card)
+  const cardMarginRight = Number(cardStyle.marginRight.match(/\d+/g)[0]);
+
+  // Count the number of total cards you have
+  const cardCount = carousel.querySelectorAll("[data-target='card']").length;
+
+  // Define an offset property to dynamically update by clicking the button controls
+  // as well as a maxX property so the carousel knows when to stop at the upper limit
+  let offset = 0;
+  const maxX = -((cardCount / 1) * carouselWidth +
+    (cardMarginRight * (cardCount / 1)) -
+    carouselWidth - cardMarginRight);
+
+
+  // Add the click events
+  leftButton.addEventListener("click", function () {
+    if (offset !== 0) {
+      offset += carouselWidth + cardMarginRight;
+      carousel.style.transform = `translateX(${offset}px)`;
+    }
+  });
+
+  rightButton.addEventListener("click", function () {
+    if (offset !== maxX) {
+      offset -= carouselWidth + cardMarginRight;
+      carousel.style.transform = `translateX(${offset}px)`;
+    }
+  });
+</script>
 
 </html>
